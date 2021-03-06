@@ -1,17 +1,20 @@
 {% extends 'bootstrap/base.html' %}
 
 {% block title %}
-    {% if title %}{{ title }} - Luttrell-fam{% else %}{{ _('Welcome to Luttrell-fam') }}{% endif %}
+    {% if title %}{{ title }} - Microblog{% else %}{{ _('Welcome to Microblog') }}{% endif %}
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #535353;">
-        <div class="container-fluid">
-            <div class="navbar-header navbar-dark">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="navbar-toggler-icon">Toggle navigation</span>
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Luttrell-fam</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">Microblog</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -27,13 +30,13 @@
                 {% endif %}
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
-                    <li class="nav-link"><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
+                    <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
-                    <li class="nav-link">
-                        <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}<
+                    <li>
+                        <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}
                             {% set new_messages = current_user.new_messages() %}
                             <span id="message_count" class="badge"
-                                style="visibility: {% if new_messages %}visible
+                                  style="visibility: {% if new_messages %}visible
                                                      {% else %}hidden{% endif %};">
                                 {{ new_messages }}
                             </span>
@@ -44,8 +47,7 @@
                     {% endif %}
                 </ul>
             </div>
-       </div>
-       
+        </div>
     </nav>
 {% endblock %}
 
@@ -82,7 +84,7 @@
     {{ moment.lang(g.locale) }}
     <script>
         function translate(sourceElem, destElem, sourceLang, destLang) {
-            $(destElem).html("{{<img src=url_for('static', filename='loading.gif')>}}");
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
             $.post('/translate', {
                 text: $(sourceElem).text(),
                 source_language: sourceLang,
