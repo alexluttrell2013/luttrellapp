@@ -5,14 +5,11 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-dark" style="background-color: #313131;">
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #535353;">
         <div class="container-fluid">
-            <div class="navbar-header">
+            <div class="navbar-header navbar-dark">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
+                    <span class="navbar-toggler-icon">Toggle navigation</span>
                 </button>
                 <a class="navbar-brand" href="{{ url_for('main.index') }}">Luttrell-fam</a>
             </div>
@@ -30,13 +27,13 @@
                 {% endif %}
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
+                    <li class="nav-link"><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
-                    <li>
-                        <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}
+                    <li class="nav-link">
+                        <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}<
                             {% set new_messages = current_user.new_messages() %}
                             <span id="message_count" class="badge"
-                                  style="visibility: {% if new_messages %}visible
+                                style="visibility: {% if new_messages %}visible
                                                      {% else %}hidden{% endif %};">
                                 {{ new_messages }}
                             </span>
@@ -85,7 +82,7 @@
     {{ moment.lang(g.locale) }}
     <script>
         function translate(sourceElem, destElem, sourceLang, destLang) {
-            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $(destElem).html("{{<img src=url_for('static', filename='loading.gif')>}}");
             $.post('/translate', {
                 text: $(sourceElem).text(),
                 source_language: sourceLang,
@@ -145,28 +142,28 @@
         function set_task_progress(task_id, progress) {
             $('#' + task_id + '-progress').text(progress);
         }
-        {% if current_user.is_authenticated %}
-        $(function() {
-            var since = 0;
-            setInterval(function() {
-                $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
-                    function(notifications) {
-                        for (var i = 0; i < notifications.length; i++) {
-                            switch (notifications[i].name) {
-                                case 'unread_message_count':
-                                    set_message_count(notifications[i].data);
-                                    break;
-                                case 'task_progress':
-                                    set_task_progress(notifications[i].data.task_id,
-                                        notifications[i].data.progress);
-                                    break;
+        {%if temp = current_user.is_authenticated; %}
+            $(function() {
+                var since = 0;
+                setInterval(function() {
+                    $.ajax('{{ url_for('main.notifications') }}?since=' + since).done(
+                        function(notifications) {
+                            for (var i = 0; i < notifications.length; i++) {
+                                switch (notifications[i].name) {
+                                    case 'unread_message_count':
+                                        set_message_count(notifications[i].data);
+                                        break;
+                                    case 'task_progress':
+                                        set_task_progress(notifications[i].data.task_id,
+                                            notifications[i].data.progress);
+                                        break;
+                                }
+                                since = notifications[i].timestamp;
                             }
-                            since = notifications[i].timestamp;
                         }
-                    }
-                );
-            }, 10000);
-        });
+                    );
+                }, 10000);
+            });
         {% endif %}
     </script>
 {% endblock %}
