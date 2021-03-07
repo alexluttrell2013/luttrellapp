@@ -33,13 +33,12 @@
                     <li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
                     {% else %}
                     <li>
+                        <a href="{{ url_for('#') }}">{{ _('MyProjects') }}
+                            <span class="icon-bar"></span>
+                        </a>
                         <a href="{{ url_for('main.messages') }}">{{ _('Messages') }}
                             {% set new_messages = current_user.new_messages() %}
-                            <span id="message_count" class="badge"
-                                    style="visibility: {% if new_messages %}visible
-                                                        {% else %}hidden{% endif %};">
-                                {{ new_messages }}
-                            </span>
+                            <span id="message_count" class="badge"></span>
                         </a>
                     </li>
                     <li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
@@ -84,7 +83,7 @@
     {{ moment.lang(g.locale) }}
     <script>
         function translate(sourceElem, destElem, sourceLang, destLang) {
-            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $destElem.html('<img src="/static/loading-img.jpg">');
             $.post('/translate', {
                 text: $(sourceElem).text(),
                 source_language: sourceLang,
@@ -166,53 +165,4 @@
                 );
             }, 10000);
         });
-        {% endif %}
-    </script>
-    <script gwd-served-sizes="">
-        ["300x250"]
-      </script>
-      <script type="text/javascript" id="gwd-init-code">
-        (function() {
-          var gwdAd = document.getElementById('gwd-ad');
-    
-          /**
-           * Handles the DOMContentLoaded event. The DOMContentLoaded event is
-           * fired when the document has been completely loaded and parsed.
-           */
-          function handleDomContentLoaded(event) {
-    
-          }
-    
-          /**
-           * Handles the WebComponentsReady event. This event is fired when all
-           * custom elements have been registered and upgraded.
-           */
-          function handleWebComponentsReady(event) {
-            // Start the Ad lifecycle.
-            setTimeout(function() {
-              gwdAd.initAd();
-            }, 0);
-          }
-    
-          /**
-           * Handles the event that is dispatched after the Ad has been
-           * initialized and before the default page of the Ad is shown.
-           */
-          function handleAdInitialized(event) {}
-    
-          window.addEventListener('DOMContentLoaded',
-            handleDomContentLoaded, false);
-          window.addEventListener('WebComponentsReady',
-            handleWebComponentsReady, false);
-          window.addEventListener('adinitialized',
-            handleAdInitialized, false);
-        })();
-      </script>
-      <script data-source="googbase_min.js" data-version="4" data-exports-type="googbase" src="googbase_min.js"></script>
-      <script data-source="gwd_webcomponents_v1_min.js" data-version="2" data-exports-type="gwd_webcomponents_v1" src="gwd_webcomponents_v1_min.js"></script>
-      <script data-source="gwdpage_min.js" data-version="13" data-exports-type="gwd-page" src="gwdpage_min.js"></script>
-      <script data-source="gwdpagedeck_min.js" data-version="14" data-exports-type="gwd-pagedeck" src="gwdpagedeck_min.js"></script>
-      <script data-source="https://s0.2mdn.net/ads/studio/Enabler.js" data-exports-type="gwd-google-ad" src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
-      <script data-source="gwdgooglead_min.js" data-version="8" data-exports-type="gwd-google-ad" src="gwdgooglead_min.js"></script>
-      <script data-source="gwdvideo_min.js" data-version="18" data-exports-type="gwd-video" src="gwdvideo_min.js"></script>
 {% endblock %}
