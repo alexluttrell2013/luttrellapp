@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  luttrellapp:
+    image: luttrellapp
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - :8000
+  nginx:
+    image: nginx
+    build:
+      context: ./nginx/
+      dockerfile: ./Dockerfile
+    ports:
+      - :80
+      - :443
+    
