@@ -28,14 +28,6 @@ RUN mkdir -p /home/microblog
 # create the app user
 RUN addgroup --system microblog && adduser --system --group microblog
 
-
-
-COPY requirements.txt requirements.txt
-RUN python -m venv venv
-RUN venv/bin/pip install --upgrade pip
-RUN venv/bin/pip install -r requirements.txt
-RUN venv/bin/pip install gunicorn pymysql
-
 ENV HOME=/home/microblog
 ENV APP_HOME=/home/microblog/web
 RUN mkdir $APP_HOME
@@ -54,10 +46,10 @@ COPY ./entrypoint.sh $APP_HOME
 COPY . $APP_HOME
 
 # chown all the files to the app user
-RUN chown -R microblog:microblog $APP_HOME
+RUN chown -R microblog: $HOME
 
 # change to the app user
 USER microblog
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/microblog/web/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]

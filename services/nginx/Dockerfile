@@ -1,8 +1,7 @@
-FROM nginx:alpine
+FROM nginx:1.17-alpine
 
-COPY nginx.conf /etc/nginx/sites-enabled/
-COPY entrypoint.sh ./
-RUN chmod a+x entrypoint.sh
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d
 
 
 
