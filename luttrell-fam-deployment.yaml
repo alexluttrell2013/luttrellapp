@@ -1,0 +1,68 @@
+---
+apiVersion: "v1"
+kind: "Namespace"
+metadata:
+  name: "luttrell-fam"
+---
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "microblog-config-8u7i"
+  namespace: "luttrell-fam"
+  labels:
+    app: "microblog"
+data:
+  SECRET_KEY: "ASDFJKL;"
+  DATABASE_URL: "mysql+pymysql://microblog:<database-password>@dbserver/microblog"
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "microblog"
+  namespace: "luttrell-fam"
+  labels:
+    app: "microblog"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: "microblog"
+  template:
+    metadata:
+      labels:
+        app: "microblog"
+    spec:
+      containers:
+      - name: "luttrellapp-1"
+        image: "gcr.io/my-webapp-305611/luttrellapp:latest"
+        env:
+        - name: "SECRET_KEY"
+          valueFrom:
+            configMapKeyRef:
+              key: "SECRET_KEY"
+              name: "microblog-config-8u7i"
+        - name: "DATABASE_URL"
+          valueFrom:
+            configMapKeyRef:
+              key: "DATABASE_URL"
+              name: "microblog-config-8u7i"
+---
+apiVersion: "autoscaling/v2beta1"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "microblog-hpa-avxy"
+  namespace: "luttrell-fam"
+  labels:
+    app: "microblog"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "microblog"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: "Resource"
+    resource:
+      name: "cpu"
+      targetAverageUtilization: 80
