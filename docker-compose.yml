@@ -1,40 +1,40 @@
 version: '3.4'
 
 services:
-  luttrellapp:
+  web:
     image: luttrellapp
     build:
-      context: .
+      context: ./services/web/
       dockerfile: ./Dockerfile
-    links:
-      - db
+    command: /home/microblog/venv/bin/gunicorn --bind 0.0.0.0:8000  microblog:app
     depends_on:
-      - db
-    environment:
-      DATABASE_URL: mysql+pymysql://microblog:<db-password>@localhost:3306/microblog
-    ports:
-      - ":8000"
+      - mysql
+    env_file:
+      - ./services/web/.env
+    expose:
+      - "8000"
   nginx:
-    image: nginx
     build:
-      context: ./nginx/
-      dockerfile: ./Dockerfile
-    ports:
-      - :80
-      - :443
-  mysql:
-    image: mysql-5.7
+      context: ./services/nginx/
+      dockerfile: Dockerfile
     volumes:
-      - mysql-data:/var/lib/data
-    command: --default-authentication-plugin=mysql_native_password
+      - static_volume:/home/app/web/app/static
+    ports:
+      - "1337:80"
+      - "443:443"
+    depends_on:
+      - web
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - mysql-data:/var/lib/mysql
     restart: always
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-      MYSQL_DATABASE: microblog
-      MYSQL_USER: microblog
-      MYSQL_PASSWORD: <database-password>
-    expose:
-      - :3306
+      MYSQL_DATABASE: "microblog"
+      MYSQL_USER: "microblog"
+      MYSQL_PASSWORD: "<database-password>"
 
 volumes: 
   mysql-data:
+  static_volume:

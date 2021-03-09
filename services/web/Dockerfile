@@ -12,8 +12,8 @@ RUN venv/bin/pip install gunicorn pymysql
 
 COPY app app
 COPY migrations migrations
-COPY microblog.py config.py boot.sh ./
-RUN chmod a+x boot.sh
+COPY microblog.py config.py entrypoint.sh ./
+RUN chmod a+x entrypoint.sh
 
 ENV FLASK_APP microblog.py
 
@@ -24,4 +24,4 @@ EXPOSE 8000
 
 RUN venv/bin/flask db upgrade
 
-CMD exec venv/bin/gunicorn -b :8000 microblog:app
+ENTRYPOINT [ "./entrypoint.sh" ]
