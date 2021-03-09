@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "microblog" ]
+if [ "$DATABASE" = "mysql" ]
 then
     echo "Waiting for mysql..."
 
@@ -10,5 +10,7 @@ then
 
     echo "Mysql started"
 fi
+
+flask db upgrade
 
 exec "$@"
