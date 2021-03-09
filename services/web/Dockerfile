@@ -10,6 +10,8 @@ RUN venv/bin/pip install --upgrade pip
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
 
+RUN mkdir certs
+
 COPY app app
 COPY migrations migrations
 COPY microblog.py config.py entrypoint.sh ./
