@@ -83,7 +83,7 @@
     {{ moment.lang(g.locale) }}
     <script>
         function translate(sourceElem, destElem, sourceLang, destLang) {
-            $destElem.html('<img src="/static/loading-img.jpg">');
+            $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
             $.post('/translate', {
                 text: $(sourceElem).text(),
                 source_language: sourceLang,
@@ -166,4 +166,5 @@
             }, 10000);
         });
         {% endif %}
+    </script>
 {% endblock %}
