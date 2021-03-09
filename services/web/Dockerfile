@@ -1,6 +1,4 @@
-FROM python:3.6-alpine AS builder
-
-RUN adduser -D microblog
+FROM python:3.8.1-slim-buster AS builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -8,10 +6,6 @@ WORKDIR /usr/src/app
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-# install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc
 
 # lint
 RUN pip install --upgrade pip
