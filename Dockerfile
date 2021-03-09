@@ -20,9 +20,9 @@ RUN chown -R microblog:microblog ./
 USER microblog
 
 EXPOSE 8000
-RUN source venv/bin/activate
-RUN flask db init
-RUN flask db upgrade
-RUN flask translate compile
+
+RUN venv/bin/flask db init
+RUN venv/bin/flask db upgrade
+RUN venv/bin/flask translate compile
 
 CMD exec venv/bin/gunicorn -b :8000 microblog:app
