@@ -1,8 +1,39 @@
-FROM python:3.6-alpine
+FROM python:3.6-alpine AS builder
 
 RUN adduser -D microblog
 
-WORKDIR /home/microblog
+# set work directory
+WORKDIR /usr/src/app
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
+
+# lint
+RUN pip install --upgrade pip
+
+# install python dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+
+#########
+# FINAL #
+#########
+
+# pull official base image
+FROM python:3.8.1-slim-buster
+
+RUN mkdir -p /home/microblog
+
+# create the app user
+RUN addgroup --system microblog && adduser --system --group microblog
+
+
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
@@ -10,20 +41,28 @@ RUN venv/bin/pip install --upgrade pip
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
 
-RUN mkdir certs
+ENV HOME=/home/microblog
+ENV APP_HOME=/home/microblog/web
+RUN mkdir $APP_HOME
+WORKDIR $APP_HOME
 
-COPY app app
-COPY migrations migrations
-COPY microblog.py config.py entrypoint.sh ./
-RUN chmod a+x entrypoint.sh
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+COPY --from=builder /usr/src/app/wheels /wheels
+COPY --from=builder /usr/src/app/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
 
-ENV FLASK_APP microblog.py
+# copy entrypoint-prod.sh
+COPY ./entrypoint.sh $APP_HOME
 
-RUN chown -R microblog:microblog ./
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R microblog:microblog $APP_HOME
+
+# change to the app user
 USER microblog
 
-EXPOSE 8000
-
-RUN venv/bin/flask db upgrade
-
-ENTRYPOINT [ "./entrypoint.sh" ]
+# run entrypoint.prod.sh
+ENTRYPOINT ["/home/microblog/web/entrypoint.sh"]
