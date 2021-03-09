@@ -6,6 +6,7 @@ WORKDIR /home/microblog
 
 COPY requirements.txt requirements.txt
 RUN python -m venv venv
+RUN venv/bin/pip install --upgrade pip
 RUN venv/bin/pip install -r requirements.txt
 RUN venv/bin/pip install gunicorn pymysql
 
@@ -21,8 +22,6 @@ USER microblog
 
 EXPOSE 8000
 
-RUN venv/bin/flask db init
 RUN venv/bin/flask db upgrade
-RUN venv/bin/flask translate compile
 
 CMD exec venv/bin/gunicorn -b :8000 microblog:app
