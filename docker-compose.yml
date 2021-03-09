@@ -6,8 +6,14 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+    links:
+      - db
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql+pymysql://microblog:<db-password>@localhost:3306/microblog
     ports:
-      - :8000
+      - ":8000"
   nginx:
     image: nginx
     build:
@@ -16,4 +22,19 @@ services:
     ports:
       - :80
       - :443
-    
+  mysql:
+    image: mysql-5.7
+    volumes:
+      - mysql-data:/var/lib/data
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: microblog
+      MYSQL_USER: microblog
+      MYSQL_PASSWORD: <database-password>
+    expose:
+      - :3306
+
+volumes: 
+  mysql-data:
