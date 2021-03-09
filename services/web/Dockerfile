@@ -15,6 +15,7 @@ RUN apt-get update && \
 
 # lint
 RUN pip install --upgrade pip
+COPY . /usr/src/app/
 
 # install python dependencies
 COPY ./requirements.txt .
